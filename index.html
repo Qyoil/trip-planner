@@ -190,6 +190,24 @@
                         </div>
                     </div>
 
+                    <!-- Budget Input (1인 예산) -->
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-bold text-slate-800" for="budget">
+                                <i class="fa-solid fa-wallet text-indigo-600 mr-1.5"></i>1인 예상 예산 <span class="text-xs font-normal text-slate-400">(항공/숙박 제외 현지 경비)</span>
+                            </label>
+                        </div>
+                        <div class="relative mb-2">
+                            <input type="text" id="budget" placeholder="예: 50만원, 100만원 (비워두면 적정 예산 자동 추천)" 
+                                class="w-full px-4 py-3.5 bg-slate-50 border border-slate-300 rounded-2xl text-base text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent focus:bg-white transition-all">
+                        </div>
+                        <div class="flex flex-wrap gap-1.5">
+                            <button type="button" onclick="setBudgetPreset('30만원 이하 (가성비)')" class="text-xs font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl transition-colors">💸 30만원 가성비</button>
+                            <button type="button" onclick="setBudgetPreset('60만원 (적당함)')" class="text-xs font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl transition-colors">💳 60만원 표준</button>
+                            <button type="button" onclick="setBudgetPreset('120만원 이상 (여유·미식)')" class="text-xs font-semibold bg-slate-100 hover:bg-emerald-50 hover:text-emerald-700 text-slate-700 px-3 py-1.5 rounded-xl transition-colors">💎 120만원+ 럭셔리</button>
+                        </div>
+                    </div>
+
                     <!-- Interests with Quick Chips -->
                     <div>
                         <label class="block text-sm font-bold text-slate-800 mb-2" for="interests">
@@ -294,6 +312,22 @@
                         <span>다시 생성</span>
                     </button>
                 </div>
+
+                <!-- Estimated Budget Summary Card -->
+                <div id="budget-summary-box" class="bg-emerald-50/80 border border-emerald-200/80 rounded-2xl p-3.5 flex items-center justify-between">
+                    <div class="flex items-center space-x-2.5">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 text-sm shadow-2xs">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <div>
+                            <span class="text-[11px] font-bold text-emerald-800 block">1인 총 예상 현지 경비</span>
+                            <span id="result-budget-note" class="text-[11px] text-emerald-700/80">식비·입장료·교통비 합산 기준</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span id="result-total-cost" class="text-base sm:text-lg font-extrabold text-emerald-900">약 450,000원</span>
+                    </div>
+                </div>
             </div>
 
             <!-- Day Cards Container -->
@@ -356,7 +390,13 @@
         function clearInputs() {
             document.getElementById('destination').value = '';
             document.getElementById('interests').value = '';
+            document.getElementById('budget').value = '';
             document.getElementById('destination').focus();
+        }
+
+        // 예산 프리셋 적용
+        function setBudgetPreset(val) {
+            document.getElementById('budget').value = val;
         }
 
         // 여행 템포 버튼 토글
@@ -403,6 +443,7 @@
         const mockItineraryData = {
             "title": "도쿄 핵심 명소 & 로컬 미식 투어",
             "subtitle": "실존 핫플레이스 중심의 알찬 동선 (예시 데이터)",
+            "totalEstimatedCost": "약 420,000원 (1인 기준)",
             "days": [
                 {
                     "day": 1,
@@ -412,6 +453,7 @@
                             "time": "10:00",
                             "title": "나리타/하네다 공항 도착 및 신주쿠 이동",
                             "placeName": "신주쿠역 (Shinjuku Station)",
+                            "estimatedCost": "약 30,000원 (왕복 패스)",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Shinjuku_Station_West_Exit_2018.jpg/640px-Shinjuku_Station_West_Exit_2018.jpg",
                             "desc": "나리타 익스프레스(N'EX) 또는 리무진 버스로 이동 후 숙소 짐 보관",
                             "tip": "스이카(Suica) 교통카드를 미리 모바일에 등록하면 이동이 훨씬 편합니다."
@@ -420,6 +462,7 @@
                             "time": "12:30",
                             "title": "츠케멘 맛집에서 첫 식사",
                             "placeName": "후운지 (Fuunji, 신주쿠)",
+                            "estimatedCost": "약 11,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Tsukemen_by_stu_spivack.jpg/640px-Tsukemen_by_stu_spivack.jpg",
                             "desc": "진한 닭 육수와 어패류 베이스의 농후한 츠케멘으로 유명한 로컬 맛집",
                             "tip": "점심 피크타임에는 30분 정도 웨이팅이 있으니 12시 전 방문을 추천해요."
@@ -428,6 +471,7 @@
                             "time": "15:00",
                             "title": "도쿄 도심 360도 파노라마 전망 감상",
                             "placeName": "시부야 스카이 (SHIBUYA SKY)",
+                            "estimatedCost": "약 23,000원 (입장권)",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg/640px-Tokyo_Shibuya_Scramble_Crossing_2018-10-09.jpg",
                             "desc": "시부야 스크램블 스퀘어 옥상에서 스크램블 교차로와 도쿄타워 조망",
                             "tip": "일몰 시간대 티켓은 2~4주 전 공식 홈페이지 사전 예약이 필수입니다."
@@ -436,6 +480,7 @@
                             "time": "19:00",
                             "title": "레트로 감성 꼬치구이 골목 탐방",
                             "placeName": "신주쿠 오모이데 요코초",
+                            "estimatedCost": "약 35,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Omoide_Yokocho_Shinjuku_2019.jpg/640px-Omoide_Yokocho_Shinjuku_2019.jpg",
                             "desc": "좁은 골목에 늘어선 야키토리 노포에서 생맥주와 모듬 꼬치 즐기기",
                             "tip": "현금만 받는 가게가 많으니 1,000엔권 지폐를 미리 준비하세요."
@@ -450,6 +495,7 @@
                             "time": "09:30",
                             "title": "도쿄 최고(最古) 사찰과 나카미세 거리",
                             "placeName": "센소지 (Sensoji Temple, 아사쿠사)",
+                            "estimatedCost": "무료 (간식 약 8,000원)",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0a/Sensoji_2019.jpg/640px-Sensoji_2019.jpg",
                             "desc": "가미나리몬 인증샷 후 상점가에서 아게만주와 말차 아이스크림 맛보기",
                             "tip": "오전 10시 이전에 가면 비교적 한산하게 사진을 찍을 수 있습니다."
@@ -458,6 +504,7 @@
                             "time": "12:30",
                             "title": "100년 전통 텐동 노포 점심",
                             "placeName": "다이코쿠야 덴푸라 (Daikokuya Tempura)",
+                            "estimatedCost": "약 20,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Tendon_at_Asakusa.jpg/640px-Tendon_at_Asakusa.jpg",
                             "desc": "참기름으로 바삭하게 튀겨낸 새우튀김 덮밥 전문점",
                             "tip": "호불호가 갈릴 수 있는 진한 간장 소스가 특징입니다."
@@ -466,6 +513,7 @@
                             "time": "15:00",
                             "title": "블루보틀 & 감성 로스터리 카페 휴식",
                             "placeName": "기요스미 시라카와 카페 거리",
+                            "estimatedCost": "약 9,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/A_small_cup_of_coffee.JPG/640px-A_small_cup_of_coffee.JPG",
                             "desc": "창고를 개조한 스페셜티 커피 성지에서 핸드드립 커피 한 잔의 여유",
                             "tip": "기요스미 정원 산책과 함께 묶어서 둘러보기 좋습니다."
@@ -474,6 +522,7 @@
                             "time": "19:00",
                             "title": "긴자 야경과 정통 스키야키 디너",
                             "placeName": "긴자 식스 (GINZA SIX) & 인근 스키야키 전문점",
+                            "estimatedCost": "약 75,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Ginza_Six_201704.jpg/640px-Ginza_Six_201704.jpg",
                             "desc": "세련된 백화점 구경 후 와규 스키야키로 하루 마무리",
                             "tip": "디너 코스는 최소 1주일 전 구글 예약이나 타베로그 예약을 권장합니다."
@@ -488,6 +537,7 @@
                             "time": "10:00",
                             "title": "도심 속 울창한 숲길 아침 산책",
                             "placeName": "메이지 신궁 (Meiji Jingu)",
+                            "estimatedCost": "무료",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e1/Meiji_Shrine_Torii_2018.jpg/640px-Meiji_Shrine_Torii_2018.jpg",
                             "desc": "거대한 도리이를 지나 맑은 공기를 마시며 걷는 힐링 산책 코스",
                             "tip": "입구부터 본전까지 도보로 약 10~15분 정도 소요됩니다."
@@ -496,6 +546,7 @@
                             "time": "12:30",
                             "title": "수제 햄버거 또는 규카츠 인기 맛집",
                             "placeName": "규카츠 모토무라 하라주쿠점",
+                            "estimatedCost": "약 18,000원",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/87/Gyukatsu_in_Tokyo.jpg/640px-Gyukatsu_in_Tokyo.jpg",
                             "desc": "개인 화로에 직접 구워 먹는 부드러운 소고기 돈카츠",
                             "tip": "오픈 20분 전 대기 줄에 서면 첫 타임 입장이 가능합니다."
@@ -504,6 +555,7 @@
                             "time": "14:30",
                             "title": "트렌디한 편집숍 및 기념품 쇼핑 후 이동",
                             "placeName": "캣 스트리트 (Cat Street, 오모테산도)",
+                            "estimatedCost": "약 50,000원 (쇼핑·간식)",
                             "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Omotesando_Tokyo_2019.jpg/640px-Omotesando_Tokyo_2019.jpg",
                             "desc": "감각적인 스트리트 브랜드와 소품숍 구경 후 공항으로 출발",
                             "tip": "공항 리무진이나 열차 시간 2시간 30분 전에는 출발하세요."
@@ -533,6 +585,7 @@
             const destination = document.getElementById('destination').value.trim();
             const duration = document.getElementById('duration').value;
             const companion = document.getElementById('companion').value;
+            const budget = document.getElementById('budget').value.trim() || '적정 표준 예산';
             const rawInterests = document.getElementById('interests').value.trim();
             // 선택한 여행 템포 정보도 함께 전달
             const interests = rawInterests ? `${rawInterests} (여행 스타일: ${selectedPace})` : `여행 스타일: ${selectedPace}`;
@@ -555,7 +608,7 @@
                 const response = await fetch('/api/plan', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ destination, duration, companion, interests })
+                    body: JSON.stringify({ destination, duration, companion, budget, interests })
                 });
 
                 if (!response.ok) {
@@ -564,7 +617,7 @@
 
                 const rawData = await response.json();
                 setApiBadge(true);
-                const normalizedData = normalizeItineraryData(rawData, { destination, duration, companion, interests });
+                const normalizedData = normalizeItineraryData(rawData, { destination, duration, companion, budget, interests });
                 saveItineraryToHistory(normalizedData, destination);
                 renderItinerary(normalizedData, destination);
             } catch (error) {
@@ -576,6 +629,7 @@
                     const customMock = JSON.parse(JSON.stringify(mockItineraryData));
                     customMock.title = `${destination} ${duration} 추천 일정 (예시)`;
                     customMock.subtitle = `⚠️ /api/plan 함수 연결 전이므로 예시 일정이 표시됩니다.`;
+                    customMock.totalEstimatedCost = budget !== '적정 표준 예산' ? `목표 예산 ${budget} 내외` : '약 350,000원 (1인 기준)';
                     
                     if (duration === '당일치기') {
                         customMock.days = customMock.days.slice(0, 1);
@@ -590,6 +644,7 @@
                                     "time": "10:00",
                                     "title": "호텔 체크아웃 및 로컬 베이커리 조식",
                                     "placeName": `${destination} 시내 인기 베이커리 카페`,
+                                    "estimatedCost": "약 15,000원",
                                     "desc": "갓 구운 빵과 커피로 여유롭게 여행 마무리",
                                     "tip": "면세 한도와 수하물 무게를 미리 체크하세요."
                                 },
@@ -597,6 +652,7 @@
                                     "time": "13:00",
                                     "title": "공항 이동 및 출국 수속",
                                     "placeName": `${destination} 국제공항`,
+                                    "estimatedCost": "약 20,000원 (이동비)",
                                     "desc": "면세점 쇼핑 후 귀국편 탑승",
                                     "tip": "모바일 탑승권을 미리 발급받으면 대기 시간을 줄일 수 있습니다."
                                 }
@@ -688,11 +744,16 @@
         // 생성된 일정 전체 텍스트 클립보드 복사 (iFrame 호환 execCommand 방식)
         function copyItineraryText() {
             if (!currentDisplayedItinerary) return;
-            let text = `[${currentDisplayedItinerary.title}]\n${currentDisplayedItinerary.subtitle}\n\n`;
+            let text = `[${currentDisplayedItinerary.title}]\n${currentDisplayedItinerary.subtitle}\n`;
+            if (currentDisplayedItinerary.totalEstimatedCost) {
+                text += `💰 1인 예상 경비: ${currentDisplayedItinerary.totalEstimatedCost}\n`;
+            }
+            text += `\n`;
             currentDisplayedItinerary.days.forEach(d => {
                 text += `■ DAY ${d.day}: ${d.title}\n`;
                 d.schedule.forEach(s => {
-                    text += `- ${s.time} ${s.title}${s.placeName ? ` (${s.placeName})` : ''}\n  ${s.desc}\n`;
+                    const costStr = s.estimatedCost ? ` [${s.estimatedCost}]` : '';
+                    text += `- ${s.time} ${s.title}${s.placeName ? ` (${s.placeName})` : ''}${costStr}\n  ${s.desc}\n`;
                 });
                 text += '\n';
             });
@@ -720,6 +781,7 @@
             return {
                 title: source.title || `${fallbackInfo.destination} ${fallbackInfo.duration} 맞춤 여행`,
                 subtitle: source.subtitle || `${fallbackInfo.companion}과(와) 함께하는 실존 명소 코스`,
+                totalEstimatedCost: source.totalEstimatedCost || source.totalCost || (fallbackInfo.budget ? `${fallbackInfo.budget} 내외` : '현지 물가 기준 산출'),
                 days: rawDays.map((d, idx) => {
                     const rawSchedule = d.schedule || d.activities || d.items || d.plans || [];
                     return {
@@ -729,6 +791,7 @@
                             time: item.time || '일정',
                             title: item.title || item.activity || '추천 코스',
                             placeName: item.placeName || item.place || item.location || '',
+                            estimatedCost: item.estimatedCost || item.cost || item.price || '',
                             imageUrl: item.imageUrl || item.image || '',
                             desc: item.desc || item.description || item.memo || '',
                             tip: item.tip || ''
@@ -746,6 +809,7 @@
             
             document.getElementById('result-title').innerText = data.title || '나만의 맞춤 여행 일정';
             document.getElementById('result-subtitle').innerText = data.subtitle || 'Gemini AI가 추천하는 최적의 코스입니다.';
+            document.getElementById('result-total-cost').innerText = data.totalEstimatedCost || '일정별 상세 비용 참고';
 
             const container = document.getElementById('itinerary-cards');
             container.innerHTML = '';
@@ -774,8 +838,15 @@
                                 </div>
                             ` : '';
 
-                            const placeBadgeHtml = item.placeName ? `
+                            const costBadgeHtml = item.estimatedCost ? `
+                                <span class="inline-flex items-center text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200/70 px-2.5 py-1 rounded-lg">
+                                    <i class="fa-solid fa-won-sign text-emerald-600 mr-1 text-[10px]"></i>${item.estimatedCost}
+                                </span>
+                            ` : '';
+
+                            const placeBadgeHtml = (item.placeName || item.estimatedCost) ? `
                                 <div class="mt-1.5 mb-1.5 flex flex-wrap items-center gap-1.5">
+                                    ${item.placeName ? `
                                     <span class="inline-flex items-center text-[11px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg">
                                         <i class="fa-solid fa-location-dot text-rose-500 mr-1.5"></i>${item.placeName}
                                     </span>
@@ -783,6 +854,8 @@
                                        class="inline-flex items-center text-[11px] font-semibold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-2.5 py-1 rounded-lg transition-colors">
                                         <i class="fa-solid fa-map-location-dot mr-1"></i>지도 보기
                                     </a>
+                                    ` : ''}
+                                    ${costBadgeHtml}
                                 </div>
                             ` : '';
 
